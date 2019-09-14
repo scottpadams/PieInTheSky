@@ -1,3 +1,5 @@
+var intervalRewind;
+
 var startDate = new Date();
 startDate.setUTCHours(0, 0, 0, 0);
 
@@ -116,12 +118,25 @@ var videoOverlay = L.videoOverlay( videoUrls, bounds, {
 
 
 videoOverlay.on('load', function () {
+    var MyRewindControl = L.Control.extend({
+        onAdd: function() {
+            var button = L.DomUtil.create('button');
+            button.innerHTML = '<<';
+            L.DomEvent.on(button, 'click', function () {
+                rewind(1.0, videoOverlay.getElement());
+            });
+            return button;
+        }
+    });
     var MyPauseControl = L.Control.extend({
         onAdd: function() {
             var button = L.DomUtil.create('button');
             button.innerHTML = '⏸';
             L.DomEvent.on(button, 'click', function () {
-                rewind(1.0, videoOverlay.getElement());
+                if (intervalRewind) {
+                    clearInterval(intervalRewind);
+                }
+                videoOverlay.getElement().pause();
             });
             return button;
         }
@@ -131,15 +146,35 @@ videoOverlay.on('load', function () {
             var button = L.DomUtil.create('button');
             button.innerHTML = '⏵';
             L.DomEvent.on(button, 'click', function () {
+                if (intervalRewind) {
+                    clearInterval(intervalRewind);
+                }
+                videoOverlay.getElement().playbackRate = 1.0;
                 videoOverlay.getElement().play();
-                videoOverlay.getElement().currentTime = 10;
             });
             return button;
         }
     });
 
+    var MyPlayFastControl = L.Control.extend({
+        onAdd: function() {
+            var button = L.DomUtil.create('button');
+            button.innerHTML = '>>';
+            L.DomEvent.on(button, 'click', function () {
+                if (intervalRewind) {
+                    clearInterval(intervalRewind);
+                }
+                videoOverlay.getElement().playbackRate = 3.0;
+                videoOverlay.getElement().play();
+            });
+            return button;
+        }
+    });
+
+    var rewindControl = (new MyRewindControl()).addTo(map);
     var pauseControl = (new MyPauseControl()).addTo(map);
     var playControl = (new MyPlayControl()).addTo(map);
+    var playControl = (new MyPlayFastControl()).addTo(map);
 });
 
 // var videoOverlay = L.videoOverlay( ['static/video.mp4'], bounds, {  //http://192.168.1.24:8000/stream.mjpg
@@ -187,7 +222,7 @@ function rewind(rewindSpeed, videoElement) {
     var startSystemTime = new Date().getTime();
     var startVideoTime = videoElement.currentTime;
     
-    var intervalRewind = setInterval(function(){
+    intervalRewind = setInterval(function(){
         videoElement.playbackRate = 1.0;
         if(videoElement.currentTime == 0){
             clearInterval(intervalRewind);
