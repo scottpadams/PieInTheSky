@@ -80,7 +80,7 @@ var overlayMaps = {
 var videoUrls = [
     //'http://118.243.204.173/cgi-bin/faststream.jpg?stream=half&fps=15&rand=COUNTER' // Doesn't work
     //'https://www.mapbox.com/bites/00188/patricia_nasa.mp4',
-    'static/2019-09-11-22-56-51.mp4',
+    'http://10.34.240.169:8000/stream.mjpg',
     //'video.mp4',
     
 ];
