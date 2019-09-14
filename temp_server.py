@@ -4,8 +4,7 @@ import time
 WIDTH = 640
 HEIGHT = 480
 FRAMERATE = 24.0
-STREAMSOURCE = 'https://www.mapbox.com/bites/00188/patricia_nasa.mp4'
-# 'http://192.168.1.24:8000/stream.mjpg'
+STREAMSOURCE = 'http://192.168.1.24:8000/stream.mjpg'
 
 
 cap = cv2.VideoCapture(STREAMSOURCE)
