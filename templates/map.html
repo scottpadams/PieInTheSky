@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>SafetyNet</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.5.1/Control.FullScreen.css">
+    <link rel="stylesheet" href="static/js/timedimension/leaflet.timedimension.control.css" />
+    <link rel="stylesheet" href="static/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.css" />
+</head>
+
+<body>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <div class="container">
+                    <div id="map" class="map"></div>
+                </div>
+
+                <!-- <video controls>
+                    <source src="https://www.mapbox.com/bites/00188/patricia_nasa.mp4">
+                </video> -->
+
+            </div>
+            <div class="col-sm">
+                
+            </div>
+        </div>
+    </div>
+
+
+    <!-- NO WORK <source src="static/video/video.mp4"> -->
+    <!-- NO WORK <source src="static/video/output--19-09-11-18-39.mp4"> -->
+    <!-- NO WORK <source src="static/video/video2.mp4"> -->
+    <!-- <source src="https://www.mapbox.com/bites/00188/patricia_nasa.mp4"> -->
+    <!-- <source src="static/video/overhead_street.mp4"> -->
+
+    <!-- //'http://118.243.204.173/cgi-bin/faststream.jpg?stream=half&fps=15&rand=COUNTER' // Doesn't work
+    //'video.mp4', -->
+
+    <!-- #'C:\\Users\\kyler\\apps\\safetynet2\\static\\video\\overhead_street.mp4'
+    #'http://120.127.252.113/GetData.cgi?CH=1'    # Doesn't work.  
+    #'http://192.168.1.24:8000/stream.mjpg' -->
+
+
+
+    <script type="text/javascript" src="https://cdn.rawgit.com/tryone144/dateFormat/master/date.format.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.5.1/Control.FullScreen.min.js"></script>
+    <script type="text/javascript" src="static/js/NonTiledLayer.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/nezasa/iso8601-js-period/master/iso8601.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.2/leaflet-omnivore.min.js"></script>
+    <script type="text/javascript" src="static/js/timedimension/leaflet.timedimension.js"></script>
+    <script type="text/javascript" src="static/js/timedimension/leaflet.timedimension.util.js"></script>
+    <script type="text/javascript" src="static/js/timedimension/leaflet.timedimension.layer.js"></script>
+    <script type="text/javascript" src="static/js/timedimension/leaflet.timedimension.layer.wms.js"></script>
+    <script type="text/javascript" src="static/js/timedimension/leaflet.timedimension.layer.geojson.js"></script>
+    <script type="text/javascript" src="static/js/timedimension/leaflet.timedimension.player.js"></script>
+    <script type="text/javascript" src="static/js/timedimension/leaflet.timedimension.control.js"></script>
+    <script type="text/javascript" src="static/map.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script> -->
+
+
+
+    <h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
+    <div class="message_holder"></div>
+
+    <form action="" method="POST">
+        <input type="text" class="username" placeholder="User Name" />
+        <input type="text" class="message" placeholder="Messages" />
+        <input type="submit" />
+    </form>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('connect', function () {
+            socket.emit('my event', {
+                data: 'User Connected'
+            })
+            var form = $('form').on('submit', function (e) {
+                e.preventDefault()
+                let user_name = $('input.username').val()
+                let user_input = $('input.message').val()
+                socket.emit('my event', {
+                    user_name: user_name,
+                    message: user_input
+                })
+                $('input.message').val('').focus()
+            })
+        })
+
+        socket.on('my response', function (msg) {
+            console.log(msg)
+            if (typeof msg.user_name !== 'undefined') {
+                $('h3').remove()
+                $('div.message_holder').append('<div><b style="color: #000">' + msg.user_name + '</b> ' + msg.message + '</div>')
+            }
+        })
+
+        socket.on('response from server', function (msg) {
+            console.log(msg)
+        })
+    </script>
+
+</body>
+
+</html>
