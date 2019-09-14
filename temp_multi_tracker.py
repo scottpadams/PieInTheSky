@@ -2,14 +2,14 @@ import sys
 import cv2
 from random import randint
  
-STREAMSOURCE = 'http://120.127.252.113/GetData.cgi?CH=1'
+STREAMSOURCE = 'static/video/bomber.mp4'
 #'C:\\Users\\kyler\\apps\\safetynet2\\static\\video\\overhead_street.mp4'
 #'http://120.127.252.113/GetData.cgi?CH=1'    # Doesn't work.  
 #'http://192.168.1.24:8000/stream.mjpg'
 
 
-# cap = cv2.VideoCapture(STREAMSOURCE)
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(STREAMSOURCE)
+#cap = cv2.VideoCapture(0)
 
 # Read first frame
 success, frame = cap.read()

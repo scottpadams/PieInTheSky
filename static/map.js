@@ -182,7 +182,7 @@ videoOverlay.on('load', function () {
             return button;
         }
     });
-
+    videoOverlay.getElement().playbackRate = 1.0;
     var rewindControl = (new MyRewindControl()).addTo(map);
     var pauseControl = (new MyPauseControl()).addTo(map);
     var playControl = (new MyPlayControl()).addTo(map);
@@ -199,7 +199,7 @@ var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 });
 
 var openStreetMapMapnikLayer = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
+    maxZoom: 20,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 });
 
