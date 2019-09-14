@@ -8,7 +8,8 @@ STREAMSOURCE = 'http://120.127.252.113/GetData.cgi?CH=1'
 #'http://192.168.1.24:8000/stream.mjpg'
 
 
-cap = cv2.VideoCapture(STREAMSOURCE)
+# cap = cv2.VideoCapture(STREAMSOURCE)
+cap = cv2.VideoCapture(0)
 
 # Read first frame
 success, frame = cap.read()
