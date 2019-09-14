@@ -87,7 +87,7 @@ var videoUrls = [
 
 var bounds = L.latLngBounds([[ 39.793161, -86.237917], [ 39.798796, -86.226811]]);
 
-var videoOverlay = L.videoOverlay( videoUrls, bounds, {
+var videoOverlay = L.imageOverlay( videoUrls, bounds, {
     opacity: 0.8
 }).addTo(map);
 
