@@ -79,20 +79,25 @@ var overlayMaps = {
 
 var videoUrls = [
     //'http://118.243.204.173/cgi-bin/faststream.jpg?stream=half&fps=15&rand=COUNTER' // Doesn't work
-    //'https://www.mapbox.com/bites/00188/patricia_nasa.mp4',
-    'http://10.34.240.169:8000/stream.mjpg',
+    'https://www.mapbox.com/bites/00188/patricia_nasa.mp4',
+    //'http://10.34.240.169:8000/stream.mjpg',
     //'video.mp4',
     
 ];
 
 var bounds = L.latLngBounds([[ 39.793161, -86.237917], [ 39.798796, -86.226811]]);
 
-var videoOverlay = L.imageOverlay( videoUrls, bounds, {
+var videoOverlay = L.videoOverlay( videoUrls, bounds, {
     opacity: 0.8
 }).addTo(map);
 
+map.timeDimension.on('timeloading', function(e){ 
+    
+    videoOverlay._image.currentTime = e.target._currentTimeIndex;
+});
 
 videoOverlay.on('load', function () {
+    videoOverlay.getElement().pause();
     var MyPauseControl = L.Control.extend({
         onAdd: function() {
             var button = L.DomUtil.create('button');
@@ -132,6 +137,16 @@ var openStreetMapMapnikLayer = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 });
+
+function mapFunc(e) {
+    var mapWidth=map._container.offsetWidth;
+    var mapHeight=map._container.offsetHeight;
+    console.log(e.containerPoint.x * w / mapWidth);
+    console.log(e.containerPoint.y * h / mapHeight);
+    console.log(e);
+}
+
+map.on('click', mapFunc);
 
 // var bathymetryLayer = L.tileLayer.wms("http://ows.emodnet-bathymetry.eu/wms", {
 //     layers: 'emodnet:mean_atlas_land',
