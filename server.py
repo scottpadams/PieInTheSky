@@ -27,6 +27,10 @@ def printit(json, methods=['GET', 'POST']):
 
 # printit()
 
+@socketio.on('start tracking')
+def handle_my_custom_event(json, methods=['GET', 'POST']):
+    print('received my event: ' + str(json))
+
 @socketio.on('my event')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print('received my event: ' + str(json))

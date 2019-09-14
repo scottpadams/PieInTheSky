@@ -1,5 +1,7 @@
 var intervalRewind;
-
+var socket = io.connect("127.0.0.1" + ':' + "5000");
+var time;
+var dataArray = [];
 var startDate = new Date();
 startDate.setUTCHours(0, 0, 0, 0);
 
@@ -67,6 +69,7 @@ var icon = L.icon({
     iconAnchor: [5, 25]
 });
 
+
 var customLayer = L.geoJson(null, {
     pointToLayer: function (feature, latLng) {
         if (feature.properties.hasOwnProperty('last')) {
@@ -104,42 +107,38 @@ var overlayMaps = {
 
 var videoUrls = [
     //'http://118.243.204.173/cgi-bin/faststream.jpg?stream=half&fps=15&rand=COUNTER' // Doesn't work
-    'https://www.mapbox.com/bites/00188/patricia_nasa.mp4',
+    //'https://www.mapbox.com/bites/00188/patricia_nasa.mp4',
     //'http://10.34.240.169:8000/stream.mjpg',
-<<<<<<< HEAD
-    //'static/video/video.mp4',
-=======
-    //'video.mp4',
->>>>>>> 7e124a19f03985e591d58dc56c0715b75765bc33
+    'static/video/bomber.mp4',
     
 ];
 
-var bounds = L.latLngBounds([[ 39.793161, -86.237917], [ 39.798796, -86.226811]]);
+var bounds = L.latLngBounds([[ 39.79622751241632, -86.2398540974482], [ 39.795811639766534 , -86.23946517697733]]);
+
 
 var videoOverlay = L.videoOverlay( videoUrls, bounds, {
-    opacity: 0.8
+    opacity: 0.6
 }).addTo(map);
 
 map.timeDimension.on('timeloading', function(e){ 
     
     videoOverlay._image.currentTime = e.target._currentTimeIndex;
+    time = e.time;
+    //console.log(e);
 });
 
 videoOverlay.on('load', function () {
-<<<<<<< HEAD
     var MyRewindControl = L.Control.extend({
         onAdd: function() {
             var button = L.DomUtil.create('button');
             button.innerHTML = '<<';
             L.DomEvent.on(button, 'click', function () {
-                rewind(1.0, videoOverlay.getElement());
+                rewind(3.0, videoOverlay.getElement());
             });
             return button;
         }
     });
-=======
     videoOverlay.getElement().pause();
->>>>>>> 7e124a19f03985e591d58dc56c0715b75765bc33
     var MyPauseControl = L.Control.extend({
         onAdd: function() {
             var button = L.DomUtil.create('button');
@@ -176,6 +175,7 @@ videoOverlay.on('load', function () {
                 if (intervalRewind) {
                     clearInterval(intervalRewind);
                 }
+                socket.emit('start tracking', {data : "new data"});
                 videoOverlay.getElement().playbackRate = 3.0;
                 videoOverlay.getElement().play();
             });
@@ -206,9 +206,11 @@ var openStreetMapMapnikLayer = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}
 function mapFunc(e) {
     var mapWidth=map._container.offsetWidth;
     var mapHeight=map._container.offsetHeight;
-    console.log(e.containerPoint.x * w / mapWidth);
-    console.log(e.containerPoint.y * h / mapHeight);
-    console.log(e);
+
+    e.latlng.time = time;
+    window.latlng = e.latlng;
+    dataArray.push(e.latlng);
+    console.log(e.latlng);
 }
 
 map.on('click', mapFunc);
@@ -261,8 +263,8 @@ function rewind(rewindSpeed, videoElement) {
     var longitudeDifference = topLeftVideo.long - bottomRightVideo.long;
 
     /// TODO: Replace HORIZONTALMAXPIXELS and VERTICALMAXPIXELS with width and height of video respectively.
-    var HORIZONTALMAXPIXELS = 0;
-    var VERTICALMAXPIXELS = 0;
+    var HORIZONTALMAXPIXELS = 4096;
+    var VERTICALMAXPIXELS = 2160;
 
     var pixelCoordinates;
     pixelCoordinates.topLeft.x = (topLeftVideo.long - topLeftSelection.long) / (longitudeDifference / HORIZONTALMAXPIXELS);
@@ -278,8 +280,8 @@ function rewind(rewindSpeed, videoElement) {
     var longitudeDifference = topLeftVideo.long - bottomRightVideo.long;
 
     /// TODO: Replace HORIZONTALMAXPIXELS and VERTICALMAXPIXELS with width and height of video respectively.
-    var HORIZONTALMAXPIXELS = 0;
-    var VERTICALMAXPIXELS = 0;
+    var HORIZONTALMAXPIXELS = 4096;
+    var VERTICALMAXPIXELS = 2160;
 
     var geoCoordinates;
     geoCoordinates.topLeft.x = topLeftVideo.long + topLeftSelection.long * (longitudeDifference / HORIZONTALMAXPIXELS);
