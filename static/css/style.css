@@ -1,12 +1,14 @@
 html *{
     box-sizing:border-box;
 }
+/*
 .container {
     padding: 10px 15px 20px 15px;
     margin-right: auto;
     margin-left: auto;
     max-width: 970px;
 }
+*/
 #header a{
     text-decoration: none;
     color: #80bf43;

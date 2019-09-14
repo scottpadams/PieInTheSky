@@ -12,28 +12,40 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.5.1/Control.FullScreen.css">
     <link rel="stylesheet" href="static/js/timedimension/leaflet.timedimension.control.css" />
-    <link rel="stylesheet" href="static/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.css" />
+    <link rel="stylesheet" href="static/css/style.css" />
+    <link rel="stylesheet" href="static/css/admin-style.css" />
 </head>
 
 <body>
 
 
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-sm">
-                <div class="container">
+            <div class="col-md-12">
+                <h1>Pi in the Sky</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9 shadow p-3 mb-5 bg-white rounded">
                     <div id="map" class="map"></div>
-                </div>
 
-                <!-- <video id="vid" controls>
-                    <source src="static/video/video2.mp4">
-                </video> --> 
-                <!-- <img src="http://10.34.240.169:8000/stream.mjpg"><img> -->
+                <!-- <video controls>
+                    <source src="https://www.mapbox.com/bites/00188/patricia_nasa.mp4">
+                </video> -->
 
             </div>
-            <div class="col-sm">
-                
+            <div class="col-md-3 shadow p-3 mb-5 bg-white rounded text-center">
+                <div class="card-header">Controls</div>
+                <br />
+                <input type="checkbox" name="suspect" value="suspect">&nbsp Suspect<br>
+                <br /><br />
+                <button type="button" class="btn btn-primary col-lg-8">	&#9632 Define Target</button>
+                <br /><br />
+                <button type="button" class="btn btn-primary col-lg-8">Add Target</button>
+                <br /><br />
+                <button type="button" class="btn btn-primary col-lg-8">Add Incident</button>
+                <br /><br />
             </div>
         </div>
     </div>
@@ -74,18 +86,6 @@
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script> -->
-
-
-
-    <h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
-    <div class="message_holder"></div>
-
-    <form action="" method="POST">
-        <input type="text" class="username" placeholder="User Name" />
-        <input type="text" class="message" placeholder="Messages" />
-        <input type="submit" />
-    </form>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 
