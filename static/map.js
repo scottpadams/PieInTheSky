@@ -1,3 +1,6 @@
+var intervalRewind;
+var socket = io.connect("127.0.0.1" + ':' + "5000");
+
 var startDate = new Date();
 startDate.setUTCHours(0, 0, 0, 0);
 
@@ -102,9 +105,9 @@ var overlayMaps = {
 
 var videoUrls = [
     //'http://118.243.204.173/cgi-bin/faststream.jpg?stream=half&fps=15&rand=COUNTER' // Doesn't work
-    'https://www.mapbox.com/bites/00188/patricia_nasa.mp4',
+    //'https://www.mapbox.com/bites/00188/patricia_nasa.mp4',
     //'http://10.34.240.169:8000/stream.mjpg',
-    //'static/video/video.mp4',
+    'static/video/boat.mp4',
     
 ];
 
@@ -114,14 +117,31 @@ var videoOverlay = L.videoOverlay( videoUrls, bounds, {
     opacity: 0.8
 }).addTo(map);
 
+map.timeDimension.on('timeloading', function(e){ 
+    
+    videoOverlay._image.currentTime = e.target._currentTimeIndex;
+});
 
 videoOverlay.on('load', function () {
+    var MyRewindControl = L.Control.extend({
+        onAdd: function() {
+            var button = L.DomUtil.create('button');
+            button.innerHTML = '<<';
+            L.DomEvent.on(button, 'click', function () {
+                rewind(3.0, videoOverlay.getElement());
+            });
+            return button;
+        }
+    });
     var MyPauseControl = L.Control.extend({
         onAdd: function() {
             var button = L.DomUtil.create('button');
             button.innerHTML = '⏸';
             L.DomEvent.on(button, 'click', function () {
-                rewind(1.0, videoOverlay.getElement());
+                if (intervalRewind) {
+                    clearInterval(intervalRewind);
+                }
+                videoOverlay.getElement().pause();
             });
             return button;
         }
@@ -131,15 +151,36 @@ videoOverlay.on('load', function () {
             var button = L.DomUtil.create('button');
             button.innerHTML = '⏵';
             L.DomEvent.on(button, 'click', function () {
+                if (intervalRewind) {
+                    clearInterval(intervalRewind);
+                }
+                videoOverlay.getElement().playbackRate = 1.0;
                 videoOverlay.getElement().play();
-                videoOverlay.getElement().currentTime = 10;
             });
             return button;
         }
     });
 
+    var MyPlayFastControl = L.Control.extend({
+        onAdd: function() {
+            var button = L.DomUtil.create('button');
+            button.innerHTML = '>>';
+            L.DomEvent.on(button, 'click', function () {
+                if (intervalRewind) {
+                    clearInterval(intervalRewind);
+                }
+                socket.emit('start tracking', {data : "new data"});
+                videoOverlay.getElement().playbackRate = 3.0;
+                videoOverlay.getElement().play();
+            });
+            return button;
+        }
+    });
+
+    var rewindControl = (new MyRewindControl()).addTo(map);
     var pauseControl = (new MyPauseControl()).addTo(map);
     var playControl = (new MyPlayControl()).addTo(map);
+    var playControl = (new MyPlayFastControl()).addTo(map);
 });
 
 // var videoOverlay = L.videoOverlay( ['static/video.mp4'], bounds, {  //http://192.168.1.24:8000/stream.mjpg
@@ -155,6 +196,13 @@ var openStreetMapMapnikLayer = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 });
+
+function mapFunc(e) {
+    var mapWidth=map._container.offsetWidth;
+    var mapHeight=map._container.offsetHeight;
+}
+
+map.on('click', mapFunc);
 
 // var bathymetryLayer = L.tileLayer.wms("http://ows.emodnet-bathymetry.eu/wms", {
 //     layers: 'emodnet:mean_atlas_land',
@@ -187,7 +235,7 @@ function rewind(rewindSpeed, videoElement) {
     var startSystemTime = new Date().getTime();
     var startVideoTime = videoElement.currentTime;
     
-    var intervalRewind = setInterval(function(){
+    intervalRewind = setInterval(function(){
         videoElement.playbackRate = 1.0;
         if(videoElement.currentTime == 0){
             clearInterval(intervalRewind);
@@ -204,8 +252,8 @@ function rewind(rewindSpeed, videoElement) {
     var longitudeDifference = topLeftVideo.long - bottomRightVideo.long;
 
     /// TODO: Replace HORIZONTALMAXPIXELS and VERTICALMAXPIXELS with width and height of video respectively.
-    var HORIZONTALMAXPIXELS = 0;
-    var VERTICALMAXPIXELS = 0;
+    var HORIZONTALMAXPIXELS = 4096;
+    var VERTICALMAXPIXELS = 2160;
 
     var pixelCoordinates;
     pixelCoordinates.topLeft.x = (topLeftVideo.long - topLeftSelection.long) / (longitudeDifference / HORIZONTALMAXPIXELS);
@@ -221,8 +269,8 @@ function rewind(rewindSpeed, videoElement) {
     var longitudeDifference = topLeftVideo.long - bottomRightVideo.long;
 
     /// TODO: Replace HORIZONTALMAXPIXELS and VERTICALMAXPIXELS with width and height of video respectively.
-    var HORIZONTALMAXPIXELS = 0;
-    var VERTICALMAXPIXELS = 0;
+    var HORIZONTALMAXPIXELS = 4096;
+    var VERTICALMAXPIXELS = 2160;
 
     var geoCoordinates;
     geoCoordinates.topLeft.x = topLeftVideo.long + topLeftSelection.long * (longitudeDifference / HORIZONTALMAXPIXELS);
